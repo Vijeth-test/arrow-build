@@ -1,6 +1,21 @@
 name: Trigger Crossbow build
 
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+    inputs:
+      arrow_branch:
+        description: 'Arrow branch to build'
+        required: true
+      arrow_repo:
+        description: 'Arrow repository'
+        type: choice
+        required: true
+        default: https://github.com/dremio/arrow.git
+        options:
+          - https://github.com/dremio/arrow.git
+          - https://github.com/Vijeth-test/arrow.git
+          - https://github.com/lriggs/arrow.git
+          - https://github.com/DenisTarasyuk/arrow.git
 
 env:
   CROSSBOW_GITHUB_TOKEN: ${{ secrets.CROSSBOW_GITHUB_TOKEN }}
@@ -51,7 +66,7 @@ jobs:
           set -e
           pushd ..
           source /home/runner/miniconda3/bin/activate root
-          git clone -b dremio_24.3_12.0 https://github.com/Vijeth-test/arrow.git
+          git clone -b '${{ github.event.inputs.arrow_branch }}' '{{ github.event.inputs.arrow_repo }}'
           pip install -e arrow/dev/archery[crossbow] 
           echo GITHUB_WORKSPACE:$GITHUB_WORKSPACE
           echo GITHUB_REPOSITORY: $GITHUB_REPOSITORY
