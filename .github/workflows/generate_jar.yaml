@@ -16,6 +16,11 @@ on:
           - https://github.com/Vijeth-test/arrow.git
           - https://github.com/lriggs/arrow.git
           - https://github.com/DenisTarasyuk/arrow.git
+      arrow_arm:
+        description: 'Build ARM Gandiva binary'
+        required: true
+        default: true
+        type: boolean
 
 env:
   CROSSBOW_GITHUB_TOKEN: ${{ secrets.CROSSBOW_GITHUB_TOKEN }}
