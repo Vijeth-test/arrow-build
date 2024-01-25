@@ -34,25 +34,24 @@ jobs:
         with:
           ref: 'master'
           fetch-depth: 0
-      - name: Install Conda
-        run: |
-          set -e
-          echo ""
-          echo "Installing Miniconda."
-          MINICONDA_URL="https://repo.continuum.io/miniconda"
-          MINICONDA_FILE="Miniconda3-py39_22.11.1-1-Linux-x86_64.sh"
-          curl -L -O "${MINICONDA_URL}/${MINICONDA_FILE}"
-          bash $MINICONDA_FILE -b
-      - name: Configuring Conda
-        run: |
-          set -e
-          echo ""
-          echo "Configuring conda."
-          source /home/runner/miniconda3/bin/activate root
-          conda config --remove channels defaults
-          conda config --add channels defaults
-          conda config --add channels conda-forge
-          conda config --set show_channel_urls true
+      - name: Cache conda
+        uses: actions/cache@v3
+        env:
+          # Increase this value to reset cache if etc/example-environment.yml has not changed
+          CACHE_NUMBER: 0
+        with:
+          path: ~/conda_pkgs_dir
+          key:
+            ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{
+            hashFiles('etc/example-environment.yml') }}
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          activate-environment: anaconda-client-env
+          channel-priority: strict
+          channels: defaults, conda-forge
+          show-channel-urls: true
+          environment-file: etc/example-environment.yml
+          use-only-tar-bz2: true
       - name: Install packages
         run: |
           set -e
@@ -78,4 +77,4 @@ jobs:
           cd arrow-build
           echo pwd
           pwd
-          archery crossbow --dry-run --queue-path $GITHUB_WORKSPACE --queue-remote https://github.com/$GITHUB_REPOSITORY submit java-jars --job-prefix nightly
+          archery crossbow  --queue-path $GITHUB_WORKSPACE --queue-remote https://github.com/$GITHUB_REPOSITORY submit java-jars --job-prefix nightly --dry-run
