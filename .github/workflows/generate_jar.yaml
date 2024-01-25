@@ -71,7 +71,7 @@ jobs:
           set -e
           pushd ..
           source /home/runner/miniconda3/bin/activate root
-          git clone -b '${{ github.event.inputs.arrow_branch }}' '{{ github.event.inputs.arrow_repo }}'
+          git clone -b '${{ github.event.inputs.arrow_branch }}' '${{ github.event.inputs.arrow_repo }}'
           pip install -e arrow/dev/archery[crossbow] 
           echo GITHUB_WORKSPACE:$GITHUB_WORKSPACE
           echo GITHUB_REPOSITORY: $GITHUB_REPOSITORY
