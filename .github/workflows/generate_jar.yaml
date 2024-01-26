@@ -34,23 +34,13 @@ jobs:
         with:
           ref: 'master'
           fetch-depth: 0
-      - name: Cache conda
-        uses: actions/cache@v3
-        env:
-          # Increase this value to reset cache if etc/example-environment.yml has not changed
-          CACHE_NUMBER: 0
-        with:
-          path: ~/conda_pkgs_dir
-          key:
-            ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{
-            hashFiles('etc/example-environment.yml') }}
       - name: Install Conda
         run: |
           set -e
           echo ""
           echo "Installing Miniconda."
           MINICONDA_URL="https://repo.continuum.io/miniconda"
-          MINICONDA_FILE="Miniconda3-py39_22.11.1-1-Linux-x86_64.sh"
+          MINICONDA_FILE="Miniconda3-py39_23.11.0-2-Linux-x86_64.sh"
           curl -L -O "${MINICONDA_URL}/${MINICONDA_FILE}"
           bash $MINICONDA_FILE -b
       - name: Configuring Conda
