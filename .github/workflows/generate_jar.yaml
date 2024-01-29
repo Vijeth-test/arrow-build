@@ -16,11 +16,6 @@ on:
           - https://github.com/Vijeth-test/arrow.git
           - https://github.com/lriggs/arrow.git
           - https://github.com/DenisTarasyuk/arrow.git
-      arrow_arm:
-        description: 'Build ARM Gandiva binary'
-        required: true
-        default: true
-        type: boolean
 
 env:
   CROSSBOW_GITHUB_TOKEN: ${{ secrets.CROSSBOW_GITHUB_TOKEN }}
@@ -62,7 +57,7 @@ jobs:
           github3.py \
           jinja2 \
           jira \
-          pygit2=1.5.0 \
+          pygit2=1.6.0 \
           ruamel.yaml \
           setuptools_scm \
           toolz
@@ -78,4 +73,4 @@ jobs:
           cd arrow-build
           echo pwd
           pwd
-          archery crossbow --queue-path $GITHUB_WORKSPACE --queue-remote https://github.com/$GITHUB_REPOSITORY submit java-jars --job-prefix nightly
+          archery crossbow  --queue-path $GITHUB_WORKSPACE --queue-remote https://github.com/$GITHUB_REPOSITORY submit java-jars --job-prefix nightly 
