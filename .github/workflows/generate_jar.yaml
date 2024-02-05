@@ -8,14 +8,9 @@ on:
         required: true
       arrow_repo:
         description: 'Arrow repository'
-        type: choice
+        type: string
         required: true
         default: https://github.com/dremio/arrow.git
-        options:
-          - https://github.com/dremio/arrow.git
-          - https://github.com/Vijeth-test/arrow.git
-          - https://github.com/lriggs/arrow.git
-          - https://github.com/DenisTarasyuk/arrow.git
 
 env:
   CROSSBOW_GITHUB_TOKEN: ${{ secrets.CROSSBOW_GITHUB_TOKEN }}
