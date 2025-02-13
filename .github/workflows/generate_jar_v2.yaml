@@ -1,0 +1,80 @@
+name: Trigger Crossbow build v2
+
+on: 
+  workflow_dispatch:
+    inputs:
+      arrow_branch:
+        description: 'Arrow branch to build'
+        required: true
+      arrow_repo:
+        description: 'Arrow repository'
+        type: string
+        required: true
+        default: https://github.com/dremio/arrow.git
+      arrow_java_branch:
+        description: 'Arrow-java branch to build'
+        required: true
+      arrow_java_repo:
+        description: 'Arrow-java repository'
+        type: string
+        required: true
+        default: https://github.com/dremio/arrow-java.git
+
+env:
+  CROSSBOW_GITHUB_TOKEN: ${{ secrets.CROSSBOW_GITHUB_TOKEN }}
+  ARCHERY_DEFAULT_BRANCH: 'master'
+jobs:
+  trigger-crossbow:
+    name: Trigger Crossbow v2
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: 'master'
+          fetch-depth: 0
+      - name: Install Conda
+        run: |
+          set -e
+          echo ""
+          echo "Installing Miniconda."
+          MINICONDA_URL="https://repo.continuum.io/miniconda"
+          MINICONDA_FILE="Miniconda3-py39_23.11.0-2-Linux-x86_64.sh"
+          curl -L -O "${MINICONDA_URL}/${MINICONDA_FILE}"
+          bash $MINICONDA_FILE -b
+      - name: Configuring Conda
+        run: |
+          set -e
+          echo ""
+          echo "Configuring conda."
+          source /home/runner/miniconda3/bin/activate root
+          conda config --remove channels defaults
+          conda config --add channels defaults
+          conda config --add channels conda-forge
+          conda config --set show_channel_urls true
+      - name: Install packages
+        run: |
+          set -e
+          source /home/runner/miniconda3/bin/activate root
+          conda install -y \
+          click \
+          github3.py \
+          jinja2 \
+          jira \
+          pygit2=1.6.0 \
+          ruamel.yaml \
+          setuptools_scm \
+          toolz
+      - name: Run Crossbow script
+        run: |
+          set -e
+          pushd ..
+          source /home/runner/miniconda3/bin/activate root
+          git clone -b '${{ github.event.inputs.arrow_branch }}' '${{ github.event.inputs.arrow_repo }}'
+          git clone -b '${{ github.event.inputs.arrow_java_branch }}' '${{ github.event.inputs.arrow_java_repo }}'
+          pip install -e arrow/dev/archery[crossbow] 
+          echo GITHUB_WORKSPACE:$GITHUB_WORKSPACE
+          echo GITHUB_REPOSITORY: $GITHUB_REPOSITORY
+          cd arrow-java
+          echo pwd
+          pwd
+          archery crossbow  --queue-path $GITHUB_WORKSPACE --queue-remote https://github.com/$GITHUB_REPOSITORY submit RC --job-prefix nightly 
