@@ -317,9 +317,9 @@ jobs:
         run: |
           set -e
           pushd arrow/java
-          mvn versions:set -DnewVersion=17.1.81-SNAPSHOT
-          mvn versions:set -DnewVersion=17.1.81-SNAPSHOT -f bom
-          mvn versions:set -DnewVersion=17.1.81-SNAPSHOT -f maven
+          mvn versions:set -DnewVersion=16.1.81-SNAPSHOT
+          mvn versions:set -DnewVersion=16.1.81-SNAPSHOT -f bom
+          mvn versions:set -DnewVersion=16.1.81-SNAPSHOT -f maven
           popd
           arrow/ci/scripts/java_full_build.sh \
             $GITHUB_WORKSPACE/arrow \
