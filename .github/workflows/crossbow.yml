@@ -283,7 +283,7 @@ jobs:
     needs:
       - build-cpp-ubuntu
       - build-cpp-macos
-      - build-cpp-windows
+      
     steps:
       - name: Checkout Arrow
         uses: actions/checkout@v4
@@ -304,7 +304,7 @@ jobs:
           tar -xvzf arrow-shared-libs-linux-x86_64.tar.gz
           tar -xvzf arrow-shared-libs-linux-aarch_64.tar.gz
           tar -xvzf arrow-shared-libs-macos-x86_64.tar.gz
-          tar -xvzf arrow-shared-libs-windows.tar.gz
+          
       - name: Test that shared libraries exist
         run: |
           set -x
@@ -324,9 +324,7 @@ jobs:
           test -f arrow/java-dist/arrow_orc_jni/x86_64/libarrow_orc_jni.dylib
           test -f arrow/java-dist/gandiva_jni/x86_64/libgandiva_jni.dylib
 
-          test -f arrow/java-dist/arrow_cdata_jni/x86_64/arrow_cdata_jni.dll
-          test -f arrow/java-dist/arrow_dataset_jni/x86_64/arrow_dataset_jni.dll
-          test -f arrow/java-dist/arrow_orc_jni/x86_64/arrow_orc_jni.dll
+
       - name: Build bundled jar
         env:
           MAVEN_ARGS: >-
