@@ -225,52 +225,7 @@ jobs:
           name: macos-shared-lib-${{ matrix.platform.arch }}
           path: arrow-shared-libs-macos-${{ matrix.platform.arch }}.tar.gz
 
-  build-cpp-windows:
-    name: Build C++ libraries Windows
-    runs-on: windows-2022
-    steps:
-      - name: Checkout Arrow
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-          path: arrow
-          repository: DenisTarasyuk/arrow
-          ref: aa38c5059e9b75f7e6c1af626804c42ed8f35248
-          submodules: recursive
-
-      - name: Set up Java
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-      - name: Download Timezone Database
-        shell: bash
-        run: arrow/ci/scripts/download_tz_database.sh
-      - name: Install sccache
-        shell: bash
-        run: arrow/ci/scripts/install_sccache.sh pc-windows-msvc $(pwd)/sccache
-      - name: Build C++ libraries
-        shell: cmd
-        env:
-          AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
-          AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-          SCCACHE_BUCKET: "${{ secrets.SCCACHE_BUCKET }}"
-          SCCACHE_REGION: "${{ secrets.SCCACHE_REGION }}"
-          SCCACHE_S3_KEY_PREFIX: "sccache"
-
-        run: |
-          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
-          REM For ORC
-          set TZDIR=/c/msys64/usr/share/zoneinfo
-          bash -c "arrow/ci/scripts/java_jni_windows_build.sh $(pwd)/arrow $(pwd)/arrow/cpp-build $(pwd)/arrow/java-dist"
-      - name: Compress into single artifact to keep directory structure
-        shell: bash
-        run: tar -cvzf arrow-shared-libs-windows.tar.gz arrow/java-dist/
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-shared-lib
-          path: arrow-shared-libs-windows.tar.gz
+  
 
   package-jars:
     name: Build jar files
